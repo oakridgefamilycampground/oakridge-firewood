@@ -384,6 +384,8 @@
     padding: 24px 20px 40px;
     width: 100%;
     max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
   }
   .sheet-handle {
     width: 36px; height: 4px;
@@ -572,6 +574,7 @@
       📱 <strong>SMS notifications:</strong> Once EmailJS is set up, texts will automatically be sent to Steve & Adrian's Bell phones whenever a new order is added or a delivery is claimed.
     </div>
     <button class="btn-save" onclick="saveSettings()">Save Settings</button>
+    <button class="btn-save" style="background:#e8952a;margin-top:10px" onclick="testSMS()">📤 Send Test Text to Steve</button>
   </div>
 </div>
 
@@ -922,16 +925,49 @@ function sendSMS(message, type) {
   const key = localStorage.getItem('oak_ejs_key');
   const service = localStorage.getItem('oak_ejs_service');
   const template = localStorage.getItem('oak_ejs_template');
-  if (!key || !service || !template) return; // not configured yet
-
-  try { emailjs.init(key); } catch(e) {}
-
+  if (!key || !service || !template) {
+    console.warn('EmailJS not configured – missing key/service/template');
+    return;
+  }
+  if (typeof emailjs === 'undefined') {
+    console.warn('EmailJS library not loaded');
+    return;
+  }
+  emailjs.init(key);
   BELL_NUMBERS.forEach(to => {
     emailjs.send(service, template, {
       to_email: to,
       message: message,
       from_name: 'Oakridge Firewood'
-    }).catch(e => console.warn('EmailJS error:', e));
+    }).then(() => {
+      console.log('SMS sent to', to);
+    }).catch(e => {
+      console.warn('EmailJS error:', e);
+      showToast('⚠️ Text failed: ' + (e.text || e.message || JSON.stringify(e)));
+    });
+  });
+}
+
+function testSMS() {
+  const key = localStorage.getItem('oak_ejs_key');
+  const service = localStorage.getItem('oak_ejs_service');
+  const template = localStorage.getItem('oak_ejs_template');
+  if (!key || !service || !template) {
+    showToast('⚠️ Fill in all three EmailJS fields first');
+    return;
+  }
+  showToast('📤 Sending test text…');
+  emailjs.init(key);
+  emailjs.send(service, template, {
+    to_email: BELL_NUMBERS[0],
+    message: '🧪 Test from Oakridge Firewood app!',
+    from_name: 'Oakridge Firewood'
+  }).then(() => {
+    showToast('✅ Test text sent! Check your phone.');
+  }).catch(e => {
+    const msg = e.text || e.message || e.status || JSON.stringify(e);
+    console.warn('EmailJS test error full object:', JSON.stringify(e));
+    showToast('❌ ' + msg);
   });
 }
 
