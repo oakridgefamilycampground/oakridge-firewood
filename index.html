@@ -558,6 +558,18 @@
       <label>Firebase Database URL</label>
       <input type="text" id="s-firebase" placeholder="https://your-app.firebaseio.com">
     </div>
+    <div class="form-row">
+      <label>Telegram Bot Token</label>
+      <input type="text" id="s-tg-token" placeholder="123456789:ABCdef...">
+    </div>
+    <div class="form-row">
+      <label>Steve's Telegram Chat ID</label>
+      <input type="text" id="s-tg-steve" placeholder="e.g. 8696133371">
+    </div>
+    <div class="form-row">
+      <label>Adrian's Telegram Chat ID</label>
+      <input type="text" id="s-tg-adrian" placeholder="e.g. 123456789">
+    </div>
     <div class="settings-note">
       📱 <strong>Telegram notifications:</strong> Messages will be sent to Steve & Adrian's Telegram whenever a new order is added or a delivery is claimed.
     </div>
@@ -585,8 +597,7 @@
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const TELEGRAM_TOKEN = '8270600848:AAH7RKN6J_qI6avZ51-9-y_TffG08flB9Sc';
-const TELEGRAM_CHATS = ['8696133371']; // add Adrian's chat ID when ready
+// Telegram credentials are stored in localStorage via Settings, not hardcoded here
 
 // Site badge colours – cycles through these
 const BADGE_COLORS = ['#4a6fa5','#c0392b','#2ecc71','#e67e22','#8e44ad','#16a085','#d35400','#2980b9'];
@@ -618,12 +629,18 @@ function loadSettings() {
   document.getElementById('header-name').textContent = currentUser || 'Set Name';
   document.getElementById('s-name').value = currentUser;
   document.getElementById('s-firebase').value = localStorage.getItem('oak_firebase') || '';
+  document.getElementById('s-tg-token').value = localStorage.getItem('oak_tg_token') || '';
+  document.getElementById('s-tg-steve').value = localStorage.getItem('oak_tg_steve') || '';
+  document.getElementById('s-tg-adrian').value = localStorage.getItem('oak_tg_adrian') || '';
 }
 
 function saveSettings() {
   currentUser = document.getElementById('s-name').value;
   localStorage.setItem('oak_user', currentUser);
   localStorage.setItem('oak_firebase', document.getElementById('s-firebase').value.trim());
+  localStorage.setItem('oak_tg_token', document.getElementById('s-tg-token').value.trim());
+  localStorage.setItem('oak_tg_steve', document.getElementById('s-tg-steve').value.trim());
+  localStorage.setItem('oak_tg_adrian', document.getElementById('s-tg-adrian').value.trim());
   document.getElementById('header-name').textContent = currentUser || 'Set Name';
   closeSettings();
   showToast('✅ Settings saved');
@@ -903,9 +920,19 @@ function escHtml(s) {
 }
 
 // ─── TELEGRAM NOTIFICATIONS ───────────────────────────────────────────────────
+function getTelegramChats() {
+  const token = localStorage.getItem('oak_tg_token');
+  const steve = localStorage.getItem('oak_tg_steve');
+  const adrian = localStorage.getItem('oak_tg_adrian');
+  const chats = [steve, adrian].filter(Boolean);
+  return { token, chats };
+}
+
 function sendTelegram(message) {
-  TELEGRAM_CHATS.forEach(chatId => {
-    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+  const { token, chats } = getTelegramChats();
+  if (!token || !chats.length) return;
+  chats.forEach(chatId => {
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: chatId, text: message })
@@ -916,11 +943,16 @@ function sendTelegram(message) {
 }
 
 function testTelegram() {
+  const { token, chats } = getTelegramChats();
+  if (!token || !chats.length) {
+    showToast('⚠️ Enter your Bot Token and at least one Chat ID in Settings first');
+    return;
+  }
   showToast('📤 Sending test message…');
-  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+  fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHATS[0], text: '🧪 Test from Oakridge Firewood app! If you got this it is working.' })
+    body: JSON.stringify({ chat_id: chats[0], text: '🧪 Test from Oakridge Firewood app! If you got this it is working.' })
   }).then(r => r.json()).then(data => {
     if (data.ok) {
       showToast('✅ Telegram message sent! Check your app.');
@@ -930,7 +962,6 @@ function testTelegram() {
     }
   }).catch(e => {
     showToast('❌ Network error: ' + e.message);
-    console.warn('Telegram fetch error:', e);
   });
 }
 
@@ -969,3 +1000,4 @@ function showToast(msg) {
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </body>
 </html>
+
