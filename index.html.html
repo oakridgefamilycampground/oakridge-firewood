@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oakridge – Firewood Delivery</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0ede8;
+    --card: #ffffff;
+    --forest: #2d5a3d;
+    --forest-dark: #1e3d2a;
+    --amber: #e8952a;
+    --amber-dark: #c97d1e;
+    --red: #e84444;
+    --text: #1a1a1a;
+    --text-muted: #888;
+    --border: #e0dbd4;
+    --radius: 14px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .header-logo span { font-size: 22px; }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .header-user:hover { background: var(--border); }
+  .header-user svg { opacity: 0.6; }
+
+  /* SYNC */
+  .sync-bar {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 4px;
+    background: var(--bg);
+    display: none;
+  }
+  .sync-bar.visible { display: block; }
+
+  /* MAIN */
+  .main { padding: 16px 16px 100px; max-width: 600px; margin: 0 auto; }
+
+  /* NEW REQUEST BUTTON */
+  .btn-new {
+    width: 100%;
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 17px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-new:hover { background: var(--forest-dark); }
+  .btn-new:active { transform: scale(0.98); }
+
+  /* FORM */
+  .form-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .form-card.open { display: block; }
+  .form-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-row input:focus,
+  .form-row select:focus,
+  .form-row textarea:focus { border-color: var(--forest); }
+  .form-row textarea { resize: none; height: 72px; }
+  .form-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-submit {
+    flex: 1;
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-submit:hover { background: var(--forest-dark); }
+  .btn-cancel-form {
+    background: var(--border);
+    color: var(--text);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: var(--shadow);
+  }
+  .tab {
+    flex: 1;
+    background: none;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    background: var(--forest);
+    color: white;
+  }
+
+  /* DATE GROUP */
+  .date-group { margin-bottom: 24px; }
+  .date-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .date-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .date-total {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--card);
+    border-radius: 20px;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+  }
+
+  /* ORDER CARD */
+  .order-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .site-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+    font-weight: 700;
+  }
+  .site-badge .badge-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+    text-transform: uppercase;
+  }
+  .site-badge .badge-num {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .card-info { flex: 1; }
+  .card-pieces {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .card-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .card-notes {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border-radius: 8px;
+  }
+
+  /* CLAIMED BANNER */
+  .claimed-banner {
+    background: #fef3e0;
+    border: 1.5px solid #f0c060;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7a5000;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* CARD ACTIONS */
+  .card-actions { display: flex; gap: 8px; }
+  .btn-claim {
+    flex: 1;
+    background: var(--amber);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .btn-claim:hover { background: var(--amber-dark); }
+  .btn-claim.deliver {
+    background: var(--forest);
+  }
+  .btn-claim.deliver:hover { background: var(--forest-dark); }
+  .btn-claim.unclaim {
+    background: #f0f0f0;
+    color: var(--text);
+    flex: none;
+    padding: 13px 16px;
+  }
+  .btn-icon {
+    background: #f5f0ea;
+    border: none;
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 16px;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-icon:hover { background: #ffe0e0; color: var(--red); }
+
+  /* DELIVERED / CANCELLED BADGE */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 4px 10px;
+    margin-bottom: 8px;
+  }
+  .status-badge.delivered { background: #e6f4ec; color: #2a7a4a; }
+  .status-badge.cancelled { background: #fde8e8; color: #c03030; }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty p { font-size: 15px; }
+
+  /* MODAL OVERLAY */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .overlay.open { display: flex; }
+
+  /* SETTINGS SHEET */
+  .settings-sheet {
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 600px;
+  }
+  .sheet-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .sheet-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .settings-note {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    line-height: 1.5;
+  }
+  .btn-save {
+    width: 100%;
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.15s;
+  }
+  .btn-save:hover { background: var(--forest-dark); }
+
+  /* CONFIRM DIALOG */
+  .confirm-sheet {
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 20px 40px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+  }
+  .confirm-icon { font-size: 36px; margin-bottom: 10px; }
+  .confirm-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .confirm-msg { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+  .confirm-actions { display: flex; gap: 10px; }
+  .btn-confirm-yes {
+    flex: 1; background: var(--red); color: white;
+    border: none; border-radius: 10px; padding: 14px;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-confirm-no {
+    flex: 1; background: var(--border); color: var(--text);
+    border: none; border-radius: 10px; padding: 14px;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  .toast {
+    background: #1a1a1a;
+    color: white;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    animation: slideUp 0.25s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <span>🪵</span> Oakridge
+  </div>
+  <button class="header-user" onclick="openSettings()">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    <span id="header-name">Set Name</span>
+  </button>
+</div>
+<div class="sync-bar" id="sync-bar">⟳ syncing…</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- NEW REQUEST BUTTON -->
+  <button class="btn-new" onclick="toggleForm()">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    New Request
+  </button>
+
+  <!-- FORM -->
+  <div class="form-card" id="new-form">
+    <div class="form-title">🪵 New Firewood Request</div>
+    <div class="form-row">
+      <label>Site #</label>
+      <input type="text" id="f-site" placeholder="e.g. A12 or 205" oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div class="form-row">
+      <label>Delivery Date</label>
+      <input type="date" id="f-date">
+    </div>
+    <div class="form-row">
+      <label>Pieces of Wood</label>
+      <select id="f-pieces">
+        <option value="20">20 pieces</option>
+        <option value="40" selected>40 pieces</option>
+        <option value="60">60 pieces</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Notes (optional)</label>
+      <textarea id="f-notes" placeholder="Any special instructions…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel-form" onclick="toggleForm()">Cancel</button>
+      <button class="btn-submit" onclick="submitOrder()">Submit Request</button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('queue',this)">Queue <span id="count-queue"></span></button>
+    <button class="tab" onclick="switchTab('delivered',this)">Delivered <span id="count-delivered"></span></button>
+    <button class="tab" onclick="switchTab('cancelled',this)">Cancelled <span id="count-cancelled"></span></button>
+    <button class="tab" onclick="switchTab('all',this)">All <span id="count-all"></span></button>
+  </div>
+
+  <!-- ORDER LIST -->
+  <div id="order-list"></div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div class="overlay" id="settings-overlay" onclick="closeSettings(event)">
+  <div class="settings-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">⚙️ Settings</div>
+    <div class="form-row">
+      <label>Your Name</label>
+      <select id="s-name">
+        <option value="">— select —</option>
+        <option value="Steve">Steve</option>
+        <option value="Adrian">Adrian</option>
+        <option value="Anita">Anita</option>
+        <option value="Nicole">Nicole</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Firebase Database URL</label>
+      <input type="text" id="s-firebase" placeholder="https://your-app.firebaseio.com">
+    </div>
+    <div class="form-row">
+      <label>EmailJS Public Key</label>
+      <input type="text" id="s-emailjs-key" placeholder="your_public_key">
+    </div>
+    <div class="form-row">
+      <label>EmailJS Service ID</label>
+      <input type="text" id="s-emailjs-service" placeholder="service_xxxxxxx">
+    </div>
+    <div class="form-row">
+      <label>EmailJS Template ID</label>
+      <input type="text" id="s-emailjs-template" placeholder="template_xxxxxxx">
+    </div>
+    <div class="settings-note">
+      📱 <strong>SMS notifications:</strong> Once EmailJS is set up, texts will automatically be sent to Steve & Adrian's Bell phones whenever a new order is added or a delivery is claimed.
+    </div>
+    <button class="btn-save" onclick="saveSettings()">Save Settings</button>
+  </div>
+</div>
+
+<!-- CONFIRM OVERLAY -->
+<div class="overlay" id="confirm-overlay">
+  <div class="confirm-sheet">
+    <div class="sheet-handle"></div>
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Are you sure?</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no" onclick="closeConfirm()">No, go back</button>
+      <button class="btn-confirm-yes" id="confirm-yes-btn">Yes, do it</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+// Bell SMS gateway addresses for Steve and Adrian
+const BELL_NUMBERS = ['15196142947@txt.bell.ca']; // add Adrian's when ready
+
+// Site badge colours – cycles through these
+const BADGE_COLORS = ['#4a6fa5','#c0392b','#2ecc71','#e67e22','#8e44ad','#16a085','#d35400','#2980b9'];
+function siteColor(site) {
+  let h = 0; for (let c of site) h = (h*31+c.charCodeAt(0))&0xffff;
+  return BADGE_COLORS[h % BADGE_COLORS.length];
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let orders = [];
+let currentTab = 'queue';
+let currentUser = localStorage.getItem('oak_user') || '';
+let db = null;
+let confirmCallback = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  loadSettings();
+  document.getElementById('f-date').value = todayStr();
+  initFirebase();
+});
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function loadSettings() {
+  currentUser = localStorage.getItem('oak_user') || '';
+  document.getElementById('header-name').textContent = currentUser || 'Set Name';
+  document.getElementById('s-name').value = currentUser;
+  document.getElementById('s-firebase').value = localStorage.getItem('oak_firebase') || '';
+  document.getElementById('s-emailjs-key').value = localStorage.getItem('oak_ejs_key') || '';
+  document.getElementById('s-emailjs-service').value = localStorage.getItem('oak_ejs_service') || '';
+  document.getElementById('s-emailjs-template').value = localStorage.getItem('oak_ejs_template') || '';
+}
+
+function saveSettings() {
+  currentUser = document.getElementById('s-name').value;
+  localStorage.setItem('oak_user', currentUser);
+  localStorage.setItem('oak_firebase', document.getElementById('s-firebase').value.trim());
+  localStorage.setItem('oak_ejs_key', document.getElementById('s-emailjs-key').value.trim());
+  localStorage.setItem('oak_ejs_service', document.getElementById('s-emailjs-service').value.trim());
+  localStorage.setItem('oak_ejs_template', document.getElementById('s-emailjs-template').value.trim());
+  document.getElementById('header-name').textContent = currentUser || 'Set Name';
+  closeSettings();
+  showToast('✅ Settings saved');
+  initFirebase();
+}
+
+// ─── FIREBASE ─────────────────────────────────────────────────────────────────
+function initFirebase() {
+  const url = localStorage.getItem('oak_firebase');
+  if (!url) return;
+  if (typeof firebase === 'undefined') {
+    setTimeout(initFirebase, 1000);
+    return;
+  }
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({ databaseURL: url });
+    } else {
+      firebase.app(); // use existing
+    }
+    db = firebase.database();
+    db.ref('orders').on('value', snap => {
+      const data = snap.val() || {};
+      const prev = orders.map(o=>o.id);
+      orders = Object.values(data).sort((a,b)=>a.createdAt-b.createdAt);
+      orders.forEach(o => {
+        if (!prev.includes(o.id) && o.createdBy !== currentUser) {
+          showToast(`🪵 New order: Site ${o.site} – ${o.pieces} pcs`);
+        }
+      });
+      render();
+    });
+    showToast('🔥 Connected to Firebase');
+  } catch(e) {
+    console.warn('Firebase init error', e);
+    showToast('⚠️ Firebase connection failed – check your URL in Settings');
+  }
+}
+
+function syncShow() { document.getElementById('sync-bar').classList.add('visible'); }
+function syncHide() { document.getElementById('sync-bar').classList.remove('visible'); }
+
+function dbSet(id, data) {
+  return db ? db.ref('orders/'+id).set(data) : Promise.resolve();
+}
+function dbRemove(id) {
+  return db ? db.ref('orders/'+id).remove() : Promise.resolve();
+}
+
+// ─── FORM ─────────────────────────────────────────────────────────────────────
+let formOpen = false;
+function toggleForm() {
+  formOpen = !formOpen;
+  document.getElementById('new-form').classList.toggle('open', formOpen);
+}
+
+async function submitOrder() {
+  const site = document.getElementById('f-site').value.trim().toUpperCase();
+  const date = document.getElementById('f-date').value;
+  const pieces = document.getElementById('f-pieces').value;
+  const notes = document.getElementById('f-notes').value.trim();
+  if (!site) { showToast('⚠️ Please enter a site number'); return; }
+  if (!currentUser) { showToast('⚠️ Please set your name in Settings'); openSettings(); return; }
+
+  const id = Date.now().toString();
+  const order = { id, site, pieces: parseInt(pieces), date, notes, status:'pending',
+    claimedBy:'', claimedAt:'', deliveredAt:'', createdBy: currentUser, createdAt: Date.now() };
+
+  syncShow();
+  if (db) {
+    await dbSet(id, order);
+  } else {
+    orders.push(order);
+    render();
+  }
+  syncHide();
+
+  // Reset form
+  document.getElementById('f-site').value = '';
+  document.getElementById('f-pieces').value = '40';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('f-date').value = todayStr();
+  formOpen = false;
+  document.getElementById('new-form').classList.remove('open');
+
+  sendSMS(`🪵 NEW ORDER\nSite ${site} – ${pieces} pcs\nDate: ${date}${notes?'\n'+notes:''}`, 'new_order');
+  showToast(`✅ Order added for Site ${site}`);
+}
+
+// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+async function claimOrder(id) {
+  if (!currentUser) { showToast('⚠️ Set your name in Settings first'); openSettings(); return; }
+  const o = orders.find(x=>x.id===id);
+  if (!o) return;
+  syncShow();
+  const updated = {...o, claimedBy: currentUser, claimedAt: new Date().toISOString()};
+  await dbSet(id, updated);
+  syncHide();
+  sendSMS(`🚗 ${currentUser} is on the way!\nSite ${o.site} – ${o.pieces} pcs`, 'claim');
+  showToast(`🚗 You claimed Site ${o.site}`);
+}
+
+async function unclaimOrder(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o) return;
+  syncShow();
+  await dbSet(id, {...o, claimedBy:'', claimedAt:''});
+  syncHide();
+}
+
+async function deliverOrder(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o) return;
+  syncShow();
+  await dbSet(id, {...o, status:'delivered', deliveredAt: new Date().toISOString()});
+  syncHide();
+  showToast(`✅ Site ${o.site} delivered!`);
+}
+
+function confirmCancel(id) {
+  const o = orders.find(x=>x.id===id);
+  showConfirm('❌','Cancel this order?',`Site ${o.site} – ${o.pieces} pcs`, async()=>{
+    syncShow();
+    await dbSet(id, {...o, status:'cancelled'});
+    syncHide();
+    showToast('Order cancelled');
+  });
+}
+
+function confirmDelete(id) {
+  showConfirm('🗑️','Delete permanently?','This cannot be undone.', async()=>{
+    syncShow();
+    await dbRemove(id);
+    if (!db) { orders = orders.filter(x=>x.id!==id); render(); }
+    syncHide();
+    showToast('Order deleted');
+  });
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function render() {
+  const pending = orders.filter(o=>o.status==='pending');
+  const delivered = orders.filter(o=>o.status==='delivered');
+  const cancelled = orders.filter(o=>o.status==='cancelled');
+
+  document.getElementById('count-queue').textContent = pending.length;
+  document.getElementById('count-delivered').textContent = delivered.length;
+  document.getElementById('count-cancelled').textContent = cancelled.length;
+  document.getElementById('count-all').textContent = orders.length;
+
+  const list = document.getElementById('order-list');
+
+  if (currentTab === 'queue') {
+    if (!pending.length) { list.innerHTML = emptyHTML('🪵','No pending deliveries'); return; }
+    // Group by date
+    const groups = {};
+    pending.forEach(o => { (groups[o.date]||(groups[o.date]=[])).push(o); });
+    const sorted = Object.keys(groups).sort();
+    list.innerHTML = sorted.map(date => {
+      const items = groups[date];
+      const total = items.reduce((s,o)=>s+o.pieces,0);
+      const label = dateLabel(date);
+      return `<div class="date-group">
+        <div class="date-header">
+          <div class="date-label">${label}</div>
+          <div class="date-total">${total} pcs total</div>
+        </div>
+        ${items.map(o=>pendingCard(o)).join('')}
+      </div>`;
+    }).join('');
+  } else if (currentTab === 'delivered') {
+    if (!delivered.length) { list.innerHTML = emptyHTML('✅','No deliveries yet'); return; }
+    list.innerHTML = delivered.map(o=>completedCard(o,'delivered')).join('');
+  } else if (currentTab === 'cancelled') {
+    if (!cancelled.length) { list.innerHTML = emptyHTML('❌','No cancelled orders'); return; }
+    list.innerHTML = cancelled.map(o=>completedCard(o,'cancelled')).join('');
+  } else {
+    if (!orders.length) { list.innerHTML = emptyHTML('📋','No orders yet'); return; }
+    list.innerHTML = orders.map(o=>{
+      if (o.status==='pending') return pendingCard(o);
+      return completedCard(o, o.status);
+    }).join('');
+  }
+}
+
+function pendingCard(o) {
+  const color = siteColor(o.site);
+  const claimed = !!o.claimedBy;
+  const isMe = o.claimedBy === currentUser;
+
+  const banner = claimed ? `<div class="claimed-banner">🚗 ${o.claimedBy} is on the way</div>` : '';
+  const notes = o.notes ? `<div class="card-notes">📝 ${escHtml(o.notes)}</div>` : '';
+
+  let actions = '';
+  if (!claimed) {
+    actions = `<div class="card-actions">
+      <button class="btn-claim" onclick="claimOrder('${o.id}')">🚚 I'm on it</button>
+      <button class="btn-icon" onclick="confirmCancel('${o.id}')">✕</button>
+    </div>`;
+  } else if (isMe) {
+    actions = `<div class="card-actions">
+      <button class="btn-claim deliver" onclick="deliverOrder('${o.id}')">✓ Delivered</button>
+      <button class="btn-claim unclaim" onclick="unclaimOrder('${o.id}')">Not me</button>
+    </div>`;
+  } else {
+    actions = `<div class="card-actions">
+      <button class="btn-claim deliver" onclick="deliverOrder('${o.id}')">✓ Delivered</button>
+    </div>`;
+  }
+
+  return `<div class="order-card">
+    <div class="card-top">
+      <div class="site-badge" style="background:${color}">
+        <span class="badge-label">SITE</span>
+        <span class="badge-num">${escHtml(o.site)}</span>
+      </div>
+      <div class="card-info">
+        <div class="card-pieces">${o.pieces} pcs</div>
+        <div class="card-date">${fmtDate(o.date)}</div>
+      </div>
+    </div>
+    ${notes}${banner}${actions}
+  </div>`;
+}
+
+function completedCard(o, status) {
+  const color = siteColor(o.site);
+  const badge = status === 'delivered'
+    ? `<div class="status-badge delivered">✅ Delivered${o.claimedBy?' by '+o.claimedBy:''}</div>`
+    : `<div class="status-badge cancelled">❌ Cancelled</div>`;
+  return `<div class="order-card">
+    <div class="card-top">
+      <div class="site-badge" style="background:${color}">
+        <span class="badge-label">SITE</span>
+        <span class="badge-num">${escHtml(o.site)}</span>
+      </div>
+      <div class="card-info">
+        <div class="card-pieces">${o.pieces} pcs</div>
+        <div class="card-date">${fmtDate(o.date)}</div>
+      </div>
+    </div>
+    ${badge}
+    ${o.notes?`<div class="card-notes">📝 ${escHtml(o.notes)}</div>`:''}
+    <div class="card-actions">
+      <button class="btn-icon" style="width:auto;padding:0 16px;flex:1;font-size:13px;font-weight:600;color:#c03030" onclick="confirmDelete('${o.id}')">🗑️ Delete</button>
+    </div>
+  </div>`;
+}
+
+function emptyHTML(icon, msg) {
+  return `<div class="empty"><div class="empty-icon">${icon}</div><p>${msg}</p></div>`;
+}
+
+function dateLabel(dateStr) {
+  const today = todayStr();
+  const yesterday = new Date(Date.now()-86400000).toISOString().split('T')[0];
+  if (dateStr===today) return 'TODAY';
+  if (dateStr===yesterday) return 'YESTERDAY';
+  return fmtDate(dateStr).toUpperCase();
+}
+
+function fmtDate(dateStr) {
+  const [y,m,d] = dateStr.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(d)}`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── EMAILJS / SMS ────────────────────────────────────────────────────────────
+function sendSMS(message, type) {
+  const key = localStorage.getItem('oak_ejs_key');
+  const service = localStorage.getItem('oak_ejs_service');
+  const template = localStorage.getItem('oak_ejs_template');
+  if (!key || !service || !template) return; // not configured yet
+
+  try { emailjs.init(key); } catch(e) {}
+
+  BELL_NUMBERS.forEach(to => {
+    emailjs.send(service, template, {
+      to_email: to,
+      message: message,
+      from_name: 'Oakridge Firewood'
+    }).catch(e => console.warn('EmailJS error:', e));
+  });
+}
+
+// ─── SETTINGS SHEET ───────────────────────────────────────────────────────────
+function openSettings() {
+  loadSettings();
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings(e) {
+  if (!e || e.target===document.getElementById('settings-overlay'))
+    document.getElementById('settings-overlay').classList.remove('open');
+}
+
+// ─── CONFIRM SHEET ────────────────────────────────────────────────────────────
+function showConfirm(icon, title, msg, cb) {
+  document.getElementById('confirm-icon').textContent = icon;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-yes-btn').onclick = () => { closeConfirm(); cb(); };
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('open');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>el.remove(), 3000);
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</body>
+</html>
