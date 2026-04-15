@@ -558,23 +558,11 @@
       <label>Firebase Database URL</label>
       <input type="text" id="s-firebase" placeholder="https://your-app.firebaseio.com">
     </div>
-    <div class="form-row">
-      <label>EmailJS Public Key</label>
-      <input type="text" id="s-emailjs-key" placeholder="your_public_key">
-    </div>
-    <div class="form-row">
-      <label>EmailJS Service ID</label>
-      <input type="text" id="s-emailjs-service" placeholder="service_xxxxxxx">
-    </div>
-    <div class="form-row">
-      <label>EmailJS Template ID</label>
-      <input type="text" id="s-emailjs-template" placeholder="template_xxxxxxx">
-    </div>
     <div class="settings-note">
-      📱 <strong>SMS notifications:</strong> Once EmailJS is set up, texts will automatically be sent to Steve & Adrian's Bell phones whenever a new order is added or a delivery is claimed.
+      📱 <strong>Telegram notifications:</strong> Messages will be sent to Steve & Adrian's Telegram whenever a new order is added or a delivery is claimed.
     </div>
     <button class="btn-save" onclick="saveSettings()">Save Settings</button>
-    <button class="btn-save" style="background:#e8952a;margin-top:10px" onclick="testSMS()">📤 Send Test Text to Steve</button>
+    <button class="btn-save" style="background:#e8952a;margin-top:10px" onclick="testTelegram()">📤 Send Test Telegram to Steve</button>
   </div>
 </div>
 
@@ -597,8 +585,8 @@
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-// Bell SMS gateway addresses for Steve and Adrian
-const BELL_NUMBERS = ['15196142947@txt.bell.ca']; // add Adrian's when ready
+const TELEGRAM_TOKEN = '8270600848:AAH7RKN6J_qI6avZ51-9-y_TffG08flB9Sc';
+const TELEGRAM_CHATS = ['8696133371']; // add Adrian's chat ID when ready
 
 // Site badge colours – cycles through these
 const BADGE_COLORS = ['#4a6fa5','#c0392b','#2ecc71','#e67e22','#8e44ad','#16a085','#d35400','#2980b9'];
@@ -630,18 +618,12 @@ function loadSettings() {
   document.getElementById('header-name').textContent = currentUser || 'Set Name';
   document.getElementById('s-name').value = currentUser;
   document.getElementById('s-firebase').value = localStorage.getItem('oak_firebase') || '';
-  document.getElementById('s-emailjs-key').value = localStorage.getItem('oak_ejs_key') || '';
-  document.getElementById('s-emailjs-service').value = localStorage.getItem('oak_ejs_service') || '';
-  document.getElementById('s-emailjs-template').value = localStorage.getItem('oak_ejs_template') || '';
 }
 
 function saveSettings() {
   currentUser = document.getElementById('s-name').value;
   localStorage.setItem('oak_user', currentUser);
   localStorage.setItem('oak_firebase', document.getElementById('s-firebase').value.trim());
-  localStorage.setItem('oak_ejs_key', document.getElementById('s-emailjs-key').value.trim());
-  localStorage.setItem('oak_ejs_service', document.getElementById('s-emailjs-service').value.trim());
-  localStorage.setItem('oak_ejs_template', document.getElementById('s-emailjs-template').value.trim());
   document.getElementById('header-name').textContent = currentUser || 'Set Name';
   closeSettings();
   showToast('✅ Settings saved');
@@ -727,7 +709,7 @@ async function submitOrder() {
   formOpen = false;
   document.getElementById('new-form').classList.remove('open');
 
-  sendSMS(`🪵 NEW ORDER\nSite ${site} – ${pieces} pcs\nDate: ${date}${notes?'\n'+notes:''}`, 'new_order');
+  sendTelegram(`🪵 NEW ORDER\nSite ${site} – ${pieces} pcs\nDate: ${date}${notes?'\n📝 '+notes:''}`);
   showToast(`✅ Order added for Site ${site}`);
 }
 
@@ -740,7 +722,7 @@ async function claimOrder(id) {
   const updated = {...o, claimedBy: currentUser, claimedAt: new Date().toISOString()};
   await dbSet(id, updated);
   syncHide();
-  sendSMS(`🚗 ${currentUser} is on the way!\nSite ${o.site} – ${o.pieces} pcs`, 'claim');
+  sendTelegram(`🚗 ${currentUser} is on the way!\nSite ${o.site} – ${o.pieces} pcs`);
   showToast(`🚗 You claimed Site ${o.site}`);
 }
 
@@ -920,54 +902,35 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ─── EMAILJS / SMS ────────────────────────────────────────────────────────────
-function sendSMS(message, type) {
-  const key = localStorage.getItem('oak_ejs_key');
-  const service = localStorage.getItem('oak_ejs_service');
-  const template = localStorage.getItem('oak_ejs_template');
-  if (!key || !service || !template) {
-    console.warn('EmailJS not configured – missing key/service/template');
-    return;
-  }
-  if (typeof emailjs === 'undefined') {
-    console.warn('EmailJS library not loaded');
-    return;
-  }
-  emailjs.init(key);
-  BELL_NUMBERS.forEach(to => {
-    emailjs.send(service, template, {
-      to_email: to,
-      message: message,
-      from_name: 'Oakridge Firewood'
-    }).then(() => {
-      console.log('SMS sent to', to);
-    }).catch(e => {
-      console.warn('EmailJS error:', e);
-      showToast('⚠️ Text failed: ' + (e.text || e.message || JSON.stringify(e)));
-    });
+// ─── TELEGRAM NOTIFICATIONS ───────────────────────────────────────────────────
+function sendTelegram(message) {
+  TELEGRAM_CHATS.forEach(chatId => {
+    fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: message })
+    }).then(r => r.json()).then(data => {
+      if (!data.ok) console.warn('Telegram error:', data);
+    }).catch(e => console.warn('Telegram fetch error:', e));
   });
 }
 
-function testSMS() {
-  const key = localStorage.getItem('oak_ejs_key');
-  const service = localStorage.getItem('oak_ejs_service');
-  const template = localStorage.getItem('oak_ejs_template');
-  if (!key || !service || !template) {
-    showToast('⚠️ Fill in all three EmailJS fields first');
-    return;
-  }
-  showToast('📤 Sending test text…');
-  emailjs.init(key);
-  emailjs.send(service, template, {
-    to_email: BELL_NUMBERS[0],
-    message: '🧪 Test from Oakridge Firewood app!',
-    from_name: 'Oakridge Firewood'
-  }).then(() => {
-    showToast('✅ Test text sent! Check your phone.');
+function testTelegram() {
+  showToast('📤 Sending test message…');
+  fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TELEGRAM_CHATS[0], text: '🧪 Test from Oakridge Firewood app! If you got this it is working.' })
+  }).then(r => r.json()).then(data => {
+    if (data.ok) {
+      showToast('✅ Telegram message sent! Check your app.');
+    } else {
+      showToast('❌ ' + (data.description || JSON.stringify(data)));
+      console.warn('Telegram error:', data);
+    }
   }).catch(e => {
-    const msg = e.text || e.message || e.status || JSON.stringify(e);
-    console.warn('EmailJS test error full object:', JSON.stringify(e));
-    showToast('❌ ' + msg);
+    showToast('❌ Network error: ' + e.message);
+    console.warn('Telegram fetch error:', e);
   });
 }
 
@@ -1002,7 +965,6 @@ function showToast(msg) {
   setTimeout(()=>el.remove(), 3000);
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </body>
