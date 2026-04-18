@@ -650,33 +650,51 @@ function saveSettings() {
 // ─── FIREBASE ─────────────────────────────────────────────────────────────────
 function initFirebase() {
   const url = localStorage.getItem('oak_firebase');
-  if (!url) return;
+  if (!url) {
+    showToast('⚠️ No Firebase URL — enter it in Settings');
+    return;
+  }
   if (typeof firebase === 'undefined') {
-    setTimeout(initFirebase, 1000);
+    setTimeout(initFirebase, 500);
     return;
   }
   try {
+    // Clean up any existing listeners
+    if (db) {
+      try { db.ref('orders').off(); } catch(e) {}
+    }
+    // Initialize app only once
     if (!firebase.apps.length) {
       firebase.initializeApp({ databaseURL: url });
-    } else {
-      firebase.app(); // use existing
     }
     db = firebase.database();
+
+    // Test the connection with a simple read first
+    db.ref('.info/connected').on('value', snap => {
+      if (snap.val() === true) {
+        showToast('🔥 Connected to Firebase');
+      }
+    });
+
+    // Listen for orders
     db.ref('orders').on('value', snap => {
       const data = snap.val() || {};
-      const prev = orders.map(o=>o.id);
-      orders = Object.values(data).sort((a,b)=>a.createdAt-b.createdAt);
+      const prev = orders.map(o => o.id);
+      orders = Object.values(data).sort((a, b) => a.createdAt - b.createdAt);
       orders.forEach(o => {
         if (!prev.includes(o.id) && o.createdBy !== currentUser) {
           showToast(`🪵 New order: Site ${o.site} – ${o.pieces} pcs`);
         }
       });
       render();
+    }, err => {
+      console.warn('Firebase read error:', err);
+      showToast('⚠️ Firebase error: ' + err.message);
     });
-    showToast('🔥 Connected to Firebase');
+
   } catch(e) {
-    console.warn('Firebase init error', e);
-    showToast('⚠️ Firebase connection failed – check your URL in Settings');
+    console.warn('Firebase init error:', e);
+    showToast('⚠️ Firebase failed: ' + e.message);
   }
 }
 
@@ -684,10 +702,12 @@ function syncShow() { document.getElementById('sync-bar').classList.add('visible
 function syncHide() { document.getElementById('sync-bar').classList.remove('visible'); }
 
 function dbSet(id, data) {
-  return db ? db.ref('orders/'+id).set(data) : Promise.resolve();
+  if (!db) { showToast('⚠️ Not connected to Firebase'); return Promise.reject('no db'); }
+  return db.ref('orders/' + id).set(data);
 }
 function dbRemove(id) {
-  return db ? db.ref('orders/'+id).remove() : Promise.resolve();
+  if (!db) return Promise.reject('no db');
+  return db.ref('orders/' + id).remove();
 }
 
 // ─── FORM ─────────────────────────────────────────────────────────────────────
@@ -705,14 +725,29 @@ async function submitOrder() {
   if (!site) { showToast('⚠️ Please enter a site number'); return; }
   if (!currentUser) { showToast('⚠️ Please set your name in Settings'); openSettings(); return; }
 
+  console.log('=== submitOrder ===');
+  console.log('site:', site, 'date:', date, 'pieces:', pieces);
+  console.log('db connected:', !!db);
+  console.log('currentUser:', currentUser);
+
   const id = Date.now().toString();
   const order = { id, site, pieces: parseInt(pieces), date, notes, status:'pending',
     claimedBy:'', claimedAt:'', deliveredAt:'', createdBy: currentUser, createdAt: Date.now() };
 
   syncShow();
   if (db) {
-    await dbSet(id, order);
+    console.log('Writing to Firebase…');
+    try {
+      await dbSet(id, order);
+      console.log('Firebase write succeeded');
+    } catch(e) {
+      console.warn('Firebase write failed:', e);
+      showToast('❌ Firebase error: ' + e.message);
+      syncHide();
+      return;
+    }
   } else {
+    console.log('No db – using local array');
     orders.push(order);
     render();
   }
@@ -1000,4 +1035,3 @@ function showToast(msg) {
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </body>
 </html>
-
