@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Oakridge – Firewood Delivery</title>
-
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -22,467 +21,86 @@
     --shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* HEADER */
-  .header {
-    background: var(--bg);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    font-size: 18px;
-  }
-  .header-logo span { font-size: 22px; }
-  .header-user {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: background 0.15s;
-  }
-  .header-user:hover { background: var(--border); }
-  .header-user svg { opacity: 0.6; }
+  .header { background: var(--bg); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+  .header-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; }
+  .header-user { display: flex; align-items: center; gap: 6px; background: none; border: none; font-family: inherit; font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; padding: 6px 10px; border-radius: 8px; }
 
-  /* SYNC */
-  .sync-bar {
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-muted);
-    padding: 4px;
-    background: var(--bg);
-    display: none;
-  }
+  .sync-bar { text-align: center; font-size: 12px; color: var(--text-muted); padding: 4px; background: var(--bg); display: none; }
   .sync-bar.visible { display: block; }
 
-  /* MAIN */
   .main { padding: 16px 16px 100px; max-width: 600px; margin: 0 auto; }
 
-  /* NEW REQUEST BUTTON */
-  .btn-new {
-    width: 100%;
-    background: var(--forest);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    padding: 17px;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    transition: background 0.15s, transform 0.1s;
-  }
-  .btn-new:hover { background: var(--forest-dark); }
-  .btn-new:active { transform: scale(0.98); }
+  .btn-new { width: 100%; background: var(--forest); color: white; border: none; border-radius: var(--radius); padding: 17px; font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
 
-  /* FORM */
-  .form-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-    display: none;
-  }
+  .form-card { background: var(--card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); display: none; }
   .form-card.open { display: block; }
-  .form-title {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
+  .form-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
   .form-row { margin-bottom: 14px; }
-  .form-row label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .form-row input,
-  .form-row select,
-  .form-row textarea {
-    width: 100%;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-family: inherit;
-    font-size: 15px;
-    background: var(--bg);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .form-row input:focus,
-  .form-row select:focus,
-  .form-row textarea:focus { border-color: var(--forest); }
+  .form-row label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .form-row input, .form-row select, .form-row textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; background: var(--bg); color: var(--text); outline: none; }
   .form-row textarea { resize: none; height: 72px; }
   .form-actions { display: flex; gap: 10px; margin-top: 18px; }
-  .btn-submit {
-    flex: 1;
-    background: var(--forest);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-submit:hover { background: var(--forest-dark); }
-  .btn-cancel-form {
-    background: var(--border);
-    color: var(--text);
-    border: none;
-    border-radius: 10px;
-    padding: 14px 18px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-  }
+  .btn-submit { flex: 1; background: var(--forest); color: white; border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-cancel-form { background: var(--border); color: var(--text); border: none; border-radius: 10px; padding: 14px 18px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
 
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 20px;
-    background: var(--card);
-    border-radius: 12px;
-    padding: 4px;
-    box-shadow: var(--shadow);
-  }
-  .tab {
-    flex: 1;
-    background: none;
-    border: none;
-    border-radius: 9px;
-    padding: 9px 4px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .tab.active {
-    background: var(--forest);
-    color: white;
-  }
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--card); border-radius: 12px; padding: 4px; box-shadow: var(--shadow); }
+  .tab { flex: 1; background: none; border: none; border-radius: 9px; padding: 9px 4px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+  .tab.active { background: var(--forest); color: white; }
 
-  /* DATE GROUP */
   .date-group { margin-bottom: 24px; }
-  .date-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .date-label {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-  }
-  .date-total {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    background: var(--card);
-    border-radius: 20px;
-    padding: 3px 10px;
-    border: 1px solid var(--border);
-  }
+  .date-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .date-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+  .date-total { font-size: 12px; font-weight: 600; color: var(--text-muted); background: var(--card); border-radius: 20px; padding: 3px 10px; border: 1px solid var(--border); }
 
-  /* ORDER CARD */
-  .order-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 10px;
-    box-shadow: var(--shadow);
-  }
-  .card-top {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-  }
-  .site-badge {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: white;
-    font-weight: 700;
-  }
-  .site-badge .badge-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    opacity: 0.85;
-    text-transform: uppercase;
-  }
-  .site-badge .badge-num {
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.1;
-  }
+  .order-card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .site-badge { width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; color: white; }
+  .badge-label { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.85; text-transform: uppercase; }
+  .badge-num { font-size: 16px; font-weight: 700; line-height: 1.1; }
   .card-info { flex: 1; }
-  .card-pieces {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1.1;
-  }
-  .card-date {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-  .card-notes {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-    padding: 8px 10px;
-    background: var(--bg);
-    border-radius: 8px;
-  }
-
-  /* CLAIMED BANNER */
-  .claimed-banner {
-    background: #fef3e0;
-    border: 1.5px solid #f0c060;
-    border-radius: 10px;
-    padding: 9px 12px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #7a5000;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  /* CARD ACTIONS */
+  .card-pieces { font-size: 20px; font-weight: 700; }
+  .card-date { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .card-notes { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; padding: 8px 10px; background: var(--bg); border-radius: 8px; }
+  .claimed-banner { background: #fef3e0; border: 1.5px solid #f0c060; border-radius: 10px; padding: 9px 12px; font-size: 13px; font-weight: 600; color: #7a5000; margin-bottom: 10px; }
   .card-actions { display: flex; gap: 8px; }
-  .btn-claim {
-    flex: 1;
-    background: var(--amber);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 13px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: background 0.15s;
-  }
-  .btn-claim:hover { background: var(--amber-dark); }
-  .btn-claim.deliver {
-    background: var(--forest);
-  }
-  .btn-claim.deliver:hover { background: var(--forest-dark); }
-  .btn-claim.unclaim {
-    background: #f0f0f0;
-    color: var(--text);
-    flex: none;
-    padding: 13px 16px;
-  }
-  .btn-icon {
-    background: #f5f0ea;
-    border: none;
-    border-radius: 10px;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--text-muted);
-    font-size: 16px;
-    transition: background 0.15s, color 0.15s;
-    flex-shrink: 0;
-  }
-  .btn-icon:hover { background: #ffe0e0; color: var(--red); }
-
-  /* DELIVERED / CANCELLED BADGE */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 20px;
-    padding: 4px 10px;
-    margin-bottom: 8px;
-  }
+  .btn-claim { flex: 1; background: var(--amber); color: white; border: none; border-radius: 10px; padding: 13px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn-claim.deliver { background: var(--forest); }
+  .btn-claim.unclaim { background: #f0f0f0; color: var(--text); flex: none; padding: 13px 16px; }
+  .btn-icon { background: #f5f0ea; border: none; border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; border-radius: 20px; padding: 4px 10px; margin-bottom: 8px; }
   .status-badge.delivered { background: #e6f4ec; color: #2a7a4a; }
   .status-badge.cancelled { background: #fde8e8; color: #c03030; }
 
-  /* EMPTY STATE */
   .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
   .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty p { font-size: 15px; }
 
-  /* MODAL OVERLAY */
-  .overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 200;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-  }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .overlay.open { display: flex; }
+  .settings-sheet { background: var(--card); border-radius: 20px 20px 0 0; padding: 24px 20px 40px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .sheet-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+  .settings-note { font-size: 13px; color: var(--text-muted); margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 10px; line-height: 1.5; }
+  .btn-save { width: 100%; background: var(--forest); color: white; border: none; border-radius: 10px; padding: 15px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
 
-  /* SETTINGS SHEET */
-  .settings-sheet {
-    background: var(--card);
-    border-radius: 20px 20px 0 0;
-    padding: 24px 20px 40px;
-    width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .sheet-handle {
-    width: 36px; height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 20px;
-  }
-  .sheet-title {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  .settings-note {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 16px;
-    padding: 12px;
-    background: var(--bg);
-    border-radius: 10px;
-    line-height: 1.5;
-  }
-  .btn-save {
-    width: 100%;
-    background: var(--forest);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 15px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background 0.15s;
-  }
-  .btn-save:hover { background: var(--forest-dark); }
-
-  /* CONFIRM DIALOG */
-  .confirm-sheet {
-    background: var(--card);
-    border-radius: 20px 20px 0 0;
-    padding: 28px 20px 40px;
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
-  }
+  .confirm-sheet { background: var(--card); border-radius: 20px 20px 0 0; padding: 28px 20px 40px; width: 100%; max-width: 600px; text-align: center; }
   .confirm-icon { font-size: 36px; margin-bottom: 10px; }
   .confirm-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
   .confirm-msg { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
   .confirm-actions { display: flex; gap: 10px; }
-  .btn-confirm-yes {
-    flex: 1; background: var(--red); color: white;
-    border: none; border-radius: 10px; padding: 14px;
-    font-family: inherit; font-size: 15px; font-weight: 600;
-    cursor: pointer;
-  }
-  .btn-confirm-no {
-    flex: 1; background: var(--border); color: var(--text);
-    border: none; border-radius: 10px; padding: 14px;
-    font-family: inherit; font-size: 15px; font-weight: 600;
-    cursor: pointer;
-  }
+  .btn-confirm-yes { flex: 1; background: var(--red); color: white; border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-confirm-no { flex: 1; background: var(--border); color: var(--text); border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
 
-  /* TOAST */
-  .toast-container {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-  }
-  .toast {
-    background: #1a1a1a;
-    color: white;
-    border-radius: 12px;
-    padding: 12px 18px;
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
-    animation: slideUp 0.25s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast { background: #1a1a1a; color: white; border-radius: 12px; padding: 12px 18px; font-size: 14px; font-weight: 500; white-space: nowrap; animation: slideUp 0.25s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <div class="header-logo">
-    <span>🪵</span> Oakridge
-  </div>
+  <div class="header-logo"><span>🪵</span> Oakridge</div>
   <button class="header-user" onclick="openSettings()">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
     <span id="header-name">Set Name</span>
@@ -490,15 +108,12 @@
 </div>
 <div class="sync-bar" id="sync-bar">⟳ syncing…</div>
 
-<!-- MAIN -->
 <div class="main">
-  <!-- NEW REQUEST BUTTON -->
   <button class="btn-new" onclick="toggleForm()">
     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
     New Request
   </button>
 
-  <!-- FORM -->
   <div class="form-card" id="new-form">
     <div class="form-title">🪵 New Firewood Request</div>
     <div class="form-row">
@@ -527,7 +142,6 @@
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('queue',this)">Queue <span id="count-queue"></span></button>
     <button class="tab" onclick="switchTab('delivered',this)">Delivered <span id="count-delivered"></span></button>
@@ -535,12 +149,11 @@
     <button class="tab" onclick="switchTab('all',this)">All <span id="count-all"></span></button>
   </div>
 
-  <!-- ORDER LIST -->
   <div id="order-list"></div>
 </div>
 
-<!-- SETTINGS OVERLAY -->
-<div class="overlay" id="settings-overlay" onclick="closeSettings(event)">
+<!-- SETTINGS -->
+<div class="overlay" id="settings-overlay" onclick="closeSettingsOverlay(event)">
   <div class="settings-sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">⚙️ Settings</div>
@@ -556,7 +169,7 @@
     </div>
     <div class="form-row">
       <label>Firebase Database URL</label>
-      <input type="text" id="s-firebase" placeholder="https://your-app.firebaseio.com">
+      <input type="text" id="s-firebase" placeholder="https://your-app-default-rtdb.firebaseio.com">
     </div>
     <div class="form-row">
       <label>Telegram Bot Token</label>
@@ -568,17 +181,18 @@
     </div>
     <div class="form-row">
       <label>Adrian's Telegram Chat ID</label>
-      <input type="text" id="s-tg-adrian" placeholder="e.g. 123456789">
+      <input type="text" id="s-tg-adrian" placeholder="optional – add later">
     </div>
     <div class="settings-note">
-      📱 <strong>Telegram notifications:</strong> Messages will be sent to Steve & Adrian's Telegram whenever a new order is added or a delivery is claimed.
+      📱 Telegram messages go to Steve & Adrian when a new order is added or claimed. Each device needs Settings filled in once.
     </div>
-    <button class="btn-save" onclick="saveSettings()">Save Settings</button>
-    <button class="btn-save" style="background:#e8952a;margin-top:10px" onclick="testTelegram()">📤 Send Test Telegram to Steve</button>
+    <button class="btn-save" onclick="saveSettings()">💾 Save Settings</button>
+    <button class="btn-save" style="background:var(--amber)" onclick="testTelegram()">📤 Send Test Telegram</button>
+    <button class="btn-save" style="background:#555" onclick="testFirebase()">🔥 Test Firebase Connection</button>
   </div>
 </div>
 
-<!-- CONFIRM OVERLAY -->
+<!-- CONFIRM -->
 <div class="overlay" id="confirm-overlay">
   <div class="confirm-sheet">
     <div class="sheet-handle"></div>
@@ -592,290 +206,246 @@
   </div>
 </div>
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
-// Telegram credentials are stored in localStorage via Settings, not hardcoded here
-
-// Site badge colours – cycles through these
-const BADGE_COLORS = ['#4a6fa5','#c0392b','#2ecc71','#e67e22','#8e44ad','#16a085','#d35400','#2980b9'];
-function siteColor(site) {
-  let h = 0; for (let c of site) h = (h*31+c.charCodeAt(0))&0xffff;
-  return BADGE_COLORS[h % BADGE_COLORS.length];
-}
-
-// ─── STATE ────────────────────────────────────────────────────────────────────
+// ── STATE ──────────────────────────────────────────────────────────────────────
 let orders = [];
 let currentTab = 'queue';
 let currentUser = localStorage.getItem('oak_user') || '';
-let db = null;
-let confirmCallback = null;
+let pollTimer = null;
+let lastKnownIds = [];
+let formOpen = false;
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+const COLORS = ['#4a6fa5','#c0392b','#27ae60','#e67e22','#8e44ad','#16a085','#d35400','#2980b9'];
+function siteColor(s) { let h=0; for(let c of s) h=(h*31+c.charCodeAt(0))&0xffff; return COLORS[h%COLORS.length]; }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── BOOT ───────────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  loadSettings();
   document.getElementById('f-date').value = todayStr();
-  initFirebase();
+  document.getElementById('header-name').textContent = currentUser || 'Set Name';
+  startPolling();
 });
 
-function todayStr() {
-  return new Date().toISOString().split('T')[0];
+// ── FIREBASE REST ──────────────────────────────────────────────────────────────
+function baseUrl() {
+  return (localStorage.getItem('oak_firebase') || '').replace(/\/$/, '');
 }
 
-function loadSettings() {
-  currentUser = localStorage.getItem('oak_user') || '';
-  document.getElementById('header-name').textContent = currentUser || 'Set Name';
-  document.getElementById('s-name').value = currentUser;
-  document.getElementById('s-firebase').value = localStorage.getItem('oak_firebase') || '';
-  document.getElementById('s-tg-token').value = localStorage.getItem('oak_tg_token') || '';
-  document.getElementById('s-tg-steve').value = localStorage.getItem('oak_tg_steve') || '';
-  document.getElementById('s-tg-adrian').value = localStorage.getItem('oak_tg_adrian') || '';
+async function fbFetch() {
+  const b = baseUrl();
+  if (!b) return {};
+  const r = await fetch(b + '/orders.json');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return (await r.json()) || {};
 }
 
-function saveSettings() {
-  currentUser = document.getElementById('s-name').value;
-  localStorage.setItem('oak_user', currentUser);
-  localStorage.setItem('oak_firebase', document.getElementById('s-firebase').value.trim());
-  localStorage.setItem('oak_tg_token', document.getElementById('s-tg-token').value.trim());
-  localStorage.setItem('oak_tg_steve', document.getElementById('s-tg-steve').value.trim());
-  localStorage.setItem('oak_tg_adrian', document.getElementById('s-tg-adrian').value.trim());
-  document.getElementById('header-name').textContent = currentUser || 'Set Name';
-  closeSettings();
-  showToast('✅ Settings saved');
-  initFirebase();
+async function fbPut(id, data) {
+  const b = baseUrl();
+  if (!b) throw new Error('No Firebase URL — open Settings');
+  const r = await fetch(b + '/orders/' + id + '.json', {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
 }
 
-// ─── FIREBASE ─────────────────────────────────────────────────────────────────
-function initFirebase() {
-  const url = localStorage.getItem('oak_firebase');
-  if (!url) {
-    showToast('⚠️ No Firebase URL — enter it in Settings');
-    return;
-  }
-  if (typeof firebase === 'undefined') {
-    setTimeout(initFirebase, 500);
-    return;
-  }
+async function fbDel(id) {
+  const b = baseUrl();
+  if (!b) throw new Error('No Firebase URL — open Settings');
+  const r = await fetch(b + '/orders/' + id + '.json', { method: 'DELETE' });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+}
+
+async function poll() {
   try {
-    // Clean up any existing listeners
-    if (db) {
-      try { db.ref('orders').off(); } catch(e) {}
-    }
-    // Initialize app only once
-    if (!firebase.apps.length) {
-      firebase.initializeApp({ databaseURL: url });
-    }
-    db = firebase.database();
-
-    // Test the connection with a simple read first
-    db.ref('.info/connected').on('value', snap => {
-      if (snap.val() === true) {
-        showToast('🔥 Connected to Firebase');
-      }
+    const data = await fbFetch();
+    const fresh = Object.values(data).sort((a,b) => a.createdAt - b.createdAt);
+    fresh.forEach(o => {
+      if (!lastKnownIds.includes(o.id) && o.createdBy !== currentUser)
+        showToast('🪵 New order: Site ' + o.site + ' – ' + o.pieces + ' pcs');
     });
-
-    // Listen for orders
-    db.ref('orders').on('value', snap => {
-      const data = snap.val() || {};
-      const prev = orders.map(o => o.id);
-      orders = Object.values(data).sort((a, b) => a.createdAt - b.createdAt);
-      orders.forEach(o => {
-        if (!prev.includes(o.id) && o.createdBy !== currentUser) {
-          showToast(`🪵 New order: Site ${o.site} – ${o.pieces} pcs`);
-        }
-      });
-      render();
-    }, err => {
-      console.warn('Firebase read error:', err);
-      showToast('⚠️ Firebase error: ' + err.message);
-    });
-
-  } catch(e) {
-    console.warn('Firebase init error:', e);
-    showToast('⚠️ Firebase failed: ' + e.message);
-  }
+    lastKnownIds = fresh.map(o => o.id);
+    orders = fresh;
+    render();
+  } catch(e) { /* silent */ }
 }
 
-function syncShow() { document.getElementById('sync-bar').classList.add('visible'); }
-function syncHide() { document.getElementById('sync-bar').classList.remove('visible'); }
-
-function dbSet(id, data) {
-  if (!db) { showToast('⚠️ Not connected to Firebase'); return Promise.reject('no db'); }
-  return db.ref('orders/' + id).set(data);
-}
-function dbRemove(id) {
-  if (!db) return Promise.reject('no db');
-  return db.ref('orders/' + id).remove();
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  poll();
+  pollTimer = setInterval(poll, 8000);
 }
 
-// ─── FORM ─────────────────────────────────────────────────────────────────────
-let formOpen = false;
+async function testFirebase() {
+  const b = baseUrl();
+  if (!b) { showToast('⚠️ No Firebase URL in Settings'); return; }
+  showToast('🔄 Testing…');
+  try {
+    const data = await fbFetch();
+    showToast('✅ Firebase OK – ' + Object.keys(data).length + ' orders');
+  } catch(e) { showToast('❌ ' + e.message); }
+}
+
+// ── FORM ───────────────────────────────────────────────────────────────────────
 function toggleForm() {
   formOpen = !formOpen;
   document.getElementById('new-form').classList.toggle('open', formOpen);
 }
 
 async function submitOrder() {
-  const site = document.getElementById('f-site').value.trim().toUpperCase();
-  const date = document.getElementById('f-date').value;
+  const site   = document.getElementById('f-site').value.trim().toUpperCase();
+  const date   = document.getElementById('f-date').value;
   const pieces = document.getElementById('f-pieces').value;
-  const notes = document.getElementById('f-notes').value.trim();
-  if (!site) { showToast('⚠️ Please enter a site number'); return; }
-  if (!currentUser) { showToast('⚠️ Please set your name in Settings'); openSettings(); return; }
+  const notes  = document.getElementById('f-notes').value.trim();
 
-  console.log('=== submitOrder ===');
-  console.log('site:', site, 'date:', date, 'pieces:', pieces);
-  console.log('db connected:', !!db);
-  console.log('currentUser:', currentUser);
+  if (!site)        { showToast('⚠️ Please enter a site number'); return; }
+  if (!currentUser) { showToast('⚠️ Set your name in Settings'); openSettings(); return; }
+  if (!baseUrl())   { showToast('⚠️ No Firebase URL — open Settings'); openSettings(); return; }
 
   const id = Date.now().toString();
-  const order = { id, site, pieces: parseInt(pieces), date, notes, status:'pending',
-    claimedBy:'', claimedAt:'', deliveredAt:'', createdBy: currentUser, createdAt: Date.now() };
+  const order = { id, site, pieces: parseInt(pieces), date, notes,
+    status:'pending', claimedBy:'', claimedAt:'', deliveredAt:'',
+    createdBy: currentUser, createdAt: Date.now() };
 
   syncShow();
-  if (db) {
-    console.log('Writing to Firebase…');
-    try {
-      await dbSet(id, order);
-      console.log('Firebase write succeeded');
-    } catch(e) {
-      console.warn('Firebase write failed:', e);
-      showToast('❌ Firebase error: ' + e.message);
-      syncHide();
-      return;
-    }
-  } else {
-    console.log('No db – using local array');
-    orders.push(order);
-    render();
-  }
+  try {
+    await fbPut(id, order);
+    document.getElementById('f-site').value = '';
+    document.getElementById('f-pieces').value = '40';
+    document.getElementById('f-notes').value = '';
+    document.getElementById('f-date').value = todayStr();
+    formOpen = false;
+    document.getElementById('new-form').classList.remove('open');
+    await poll();
+    sendTelegram('🪵 NEW ORDER\nSite ' + site + ' – ' + pieces + ' pcs\nDate: ' + date + (notes ? '\n📝 ' + notes : ''));
+    showToast('✅ Order added for Site ' + site);
+  } catch(e) { showToast('❌ ' + e.message); }
   syncHide();
-
-  // Reset form
-  document.getElementById('f-site').value = '';
-  document.getElementById('f-pieces').value = '40';
-  document.getElementById('f-notes').value = '';
-  document.getElementById('f-date').value = todayStr();
-  formOpen = false;
-  document.getElementById('new-form').classList.remove('open');
-
-  sendTelegram(`🪵 NEW ORDER\nSite ${site} – ${pieces} pcs\nDate: ${date}${notes?'\n📝 '+notes:''}`);
-  showToast(`✅ Order added for Site ${site}`);
 }
 
-// ─── ACTIONS ──────────────────────────────────────────────────────────────────
+// ── ACTIONS ────────────────────────────────────────────────────────────────────
 async function claimOrder(id) {
-  if (!currentUser) { showToast('⚠️ Set your name in Settings first'); openSettings(); return; }
-  const o = orders.find(x=>x.id===id);
-  if (!o) return;
+  if (!currentUser) { showToast('⚠️ Set your name in Settings'); openSettings(); return; }
+  const o = orders.find(x => x.id === id); if (!o) return;
   syncShow();
-  const updated = {...o, claimedBy: currentUser, claimedAt: new Date().toISOString()};
-  await dbSet(id, updated);
+  try {
+    await fbPut(id, {...o, claimedBy: currentUser, claimedAt: new Date().toISOString()});
+    await poll();
+    sendTelegram('🚗 ' + currentUser + ' is on the way!\nSite ' + o.site + ' – ' + o.pieces + ' pcs');
+    showToast('🚗 You claimed Site ' + o.site);
+  } catch(e) { showToast('❌ ' + e.message); }
   syncHide();
-  sendTelegram(`🚗 ${currentUser} is on the way!\nSite ${o.site} – ${o.pieces} pcs`);
-  showToast(`🚗 You claimed Site ${o.site}`);
 }
 
 async function unclaimOrder(id) {
-  const o = orders.find(x=>x.id===id);
-  if (!o) return;
+  const o = orders.find(x => x.id === id); if (!o) return;
   syncShow();
-  await dbSet(id, {...o, claimedBy:'', claimedAt:''});
+  try { await fbPut(id, {...o, claimedBy:'', claimedAt:''}); await poll(); } catch(e) { showToast('❌ ' + e.message); }
   syncHide();
 }
 
 async function deliverOrder(id) {
-  const o = orders.find(x=>x.id===id);
-  if (!o) return;
+  const o = orders.find(x => x.id === id); if (!o) return;
   syncShow();
-  await dbSet(id, {...o, status:'delivered', deliveredAt: new Date().toISOString()});
+  try {
+    await fbPut(id, {...o, status:'delivered', deliveredAt: new Date().toISOString()});
+    await poll();
+    showToast('✅ Site ' + o.site + ' delivered!');
+  } catch(e) { showToast('❌ ' + e.message); }
   syncHide();
-  showToast(`✅ Site ${o.site} delivered!`);
 }
 
 function confirmCancel(id) {
-  const o = orders.find(x=>x.id===id);
-  showConfirm('❌','Cancel this order?',`Site ${o.site} – ${o.pieces} pcs`, async()=>{
+  const o = orders.find(x => x.id === id);
+  showConfirm('❌','Cancel this order?','Site ' + o.site + ' – ' + o.pieces + ' pcs', async () => {
     syncShow();
-    await dbSet(id, {...o, status:'cancelled'});
+    try { await fbPut(id, {...o, status:'cancelled'}); await poll(); } catch(e) { showToast('❌ ' + e.message); }
     syncHide();
-    showToast('Order cancelled');
   });
 }
 
 function confirmDelete(id) {
-  showConfirm('🗑️','Delete permanently?','This cannot be undone.', async()=>{
+  showConfirm('🗑️','Delete permanently?','This cannot be undone.', async () => {
     syncShow();
-    await dbRemove(id);
-    if (!db) { orders = orders.filter(x=>x.id!==id); render(); }
+    try { await fbDel(id); await poll(); showToast('Order deleted'); } catch(e) { showToast('❌ ' + e.message); }
     syncHide();
-    showToast('Order deleted');
   });
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
+// ── RENDER ─────────────────────────────────────────────────────────────────────
 function switchTab(tab, el) {
   currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   render();
 }
 
 function render() {
-  const pending = orders.filter(o=>o.status==='pending');
-  const delivered = orders.filter(o=>o.status==='delivered');
-  const cancelled = orders.filter(o=>o.status==='cancelled');
-
-  document.getElementById('count-queue').textContent = pending.length;
-  document.getElementById('count-delivered').textContent = delivered.length;
-  document.getElementById('count-cancelled').textContent = cancelled.length;
-  document.getElementById('count-all').textContent = orders.length;
+  const pending   = orders.filter(o => o.status === 'pending');
+  const delivered = orders.filter(o => o.status === 'delivered');
+  const cancelled = orders.filter(o => o.status === 'cancelled');
+  document.getElementById('count-queue').textContent     = pending.length   || '';
+  document.getElementById('count-delivered').textContent = delivered.length || '';
+  document.getElementById('count-cancelled').textContent = cancelled.length || '';
+  document.getElementById('count-all').textContent       = orders.length    || '';
 
   const list = document.getElementById('order-list');
+  const map  = {queue:pending, delivered, cancelled, all:orders};
+  const items = map[currentTab];
+
+  if (!items.length) {
+    const icons = {queue:'🪵',delivered:'✅',cancelled:'❌',all:'📋'};
+    const msgs  = {queue:'No pending deliveries',delivered:'No deliveries yet',cancelled:'No cancelled orders',all:'No orders yet'};
+    list.innerHTML = `<div class="empty"><div class="empty-icon">${icons[currentTab]}</div><p>${msgs[currentTab]}</p></div>`;
+    return;
+  }
 
   if (currentTab === 'queue') {
-    if (!pending.length) { list.innerHTML = emptyHTML('🪵','No pending deliveries'); return; }
-    // Group by date
     const groups = {};
-    pending.forEach(o => { (groups[o.date]||(groups[o.date]=[])).push(o); });
-    const sorted = Object.keys(groups).sort();
-    list.innerHTML = sorted.map(date => {
-      const items = groups[date];
-      const total = items.reduce((s,o)=>s+o.pieces,0);
-      const label = dateLabel(date);
+    pending.forEach(o => (groups[o.date] = groups[o.date] || []).push(o));
+    list.innerHTML = Object.keys(groups).sort().map(date => {
+      const grp = groups[date];
+      const total = grp.reduce((s,o) => s + o.pieces, 0);
       return `<div class="date-group">
         <div class="date-header">
-          <div class="date-label">${label}</div>
+          <div class="date-label">${dateLabel(date)}</div>
           <div class="date-total">${total} pcs total</div>
         </div>
-        ${items.map(o=>pendingCard(o)).join('')}
+        ${grp.map(o => cardHTML(o)).join('')}
       </div>`;
     }).join('');
-  } else if (currentTab === 'delivered') {
-    if (!delivered.length) { list.innerHTML = emptyHTML('✅','No deliveries yet'); return; }
-    list.innerHTML = delivered.map(o=>completedCard(o,'delivered')).join('');
-  } else if (currentTab === 'cancelled') {
-    if (!cancelled.length) { list.innerHTML = emptyHTML('❌','No cancelled orders'); return; }
-    list.innerHTML = cancelled.map(o=>completedCard(o,'cancelled')).join('');
   } else {
-    if (!orders.length) { list.innerHTML = emptyHTML('📋','No orders yet'); return; }
-    list.innerHTML = orders.map(o=>{
-      if (o.status==='pending') return pendingCard(o);
-      return completedCard(o, o.status);
-    }).join('');
+    list.innerHTML = items.map(o => cardHTML(o)).join('');
   }
 }
 
-function pendingCard(o) {
-  const color = siteColor(o.site);
+function cardHTML(o) {
+  const color   = siteColor(o.site);
   const claimed = !!o.claimedBy;
-  const isMe = o.claimedBy === currentUser;
+  const isMe    = o.claimedBy === currentUser;
+  const notes   = o.notes ? `<div class="card-notes">📝 ${esc(o.notes)}</div>` : '';
 
-  const banner = claimed ? `<div class="claimed-banner">🚗 ${o.claimedBy} is on the way</div>` : '';
-  const notes = o.notes ? `<div class="card-notes">📝 ${escHtml(o.notes)}</div>` : '';
+  if (o.status !== 'pending') {
+    const badge = o.status === 'delivered'
+      ? `<div class="status-badge delivered">✅ Delivered${o.claimedBy ? ' by ' + esc(o.claimedBy) : ''}</div>`
+      : `<div class="status-badge cancelled">❌ Cancelled</div>`;
+    return `<div class="order-card">
+      <div class="card-top">
+        <div class="site-badge" style="background:${color}"><span class="badge-label">SITE</span><span class="badge-num">${esc(o.site)}</span></div>
+        <div class="card-info"><div class="card-pieces">${o.pieces} pcs</div><div class="card-date">${fmtDate(o.date)}</div></div>
+      </div>
+      ${badge}${notes}
+      <div class="card-actions">
+        <button class="btn-icon" style="width:auto;padding:0 16px;flex:1;font-size:13px;font-weight:600;color:#c03030" onclick="confirmDelete('${o.id}')">🗑️ Delete</button>
+      </div>
+    </div>`;
+  }
 
+  const banner = claimed ? `<div class="claimed-banner">🚗 ${esc(o.claimedBy)} is on the way</div>` : '';
   let actions = '';
   if (!claimed) {
     actions = `<div class="card-actions">
@@ -895,122 +465,80 @@ function pendingCard(o) {
 
   return `<div class="order-card">
     <div class="card-top">
-      <div class="site-badge" style="background:${color}">
-        <span class="badge-label">SITE</span>
-        <span class="badge-num">${escHtml(o.site)}</span>
-      </div>
-      <div class="card-info">
-        <div class="card-pieces">${o.pieces} pcs</div>
-        <div class="card-date">${fmtDate(o.date)}</div>
-      </div>
+      <div class="site-badge" style="background:${color}"><span class="badge-label">SITE</span><span class="badge-num">${esc(o.site)}</span></div>
+      <div class="card-info"><div class="card-pieces">${o.pieces} pcs</div><div class="card-date">${fmtDate(o.date)}</div></div>
     </div>
     ${notes}${banner}${actions}
   </div>`;
 }
 
-function completedCard(o, status) {
-  const color = siteColor(o.site);
-  const badge = status === 'delivered'
-    ? `<div class="status-badge delivered">✅ Delivered${o.claimedBy?' by '+o.claimedBy:''}</div>`
-    : `<div class="status-badge cancelled">❌ Cancelled</div>`;
-  return `<div class="order-card">
-    <div class="card-top">
-      <div class="site-badge" style="background:${color}">
-        <span class="badge-label">SITE</span>
-        <span class="badge-num">${escHtml(o.site)}</span>
-      </div>
-      <div class="card-info">
-        <div class="card-pieces">${o.pieces} pcs</div>
-        <div class="card-date">${fmtDate(o.date)}</div>
-      </div>
-    </div>
-    ${badge}
-    ${o.notes?`<div class="card-notes">📝 ${escHtml(o.notes)}</div>`:''}
-    <div class="card-actions">
-      <button class="btn-icon" style="width:auto;padding:0 16px;flex:1;font-size:13px;font-weight:600;color:#c03030" onclick="confirmDelete('${o.id}')">🗑️ Delete</button>
-    </div>
-  </div>`;
-}
-
-function emptyHTML(icon, msg) {
-  return `<div class="empty"><div class="empty-icon">${icon}</div><p>${msg}</p></div>`;
-}
-
-function dateLabel(dateStr) {
+function dateLabel(d) {
   const today = todayStr();
-  const yesterday = new Date(Date.now()-86400000).toISOString().split('T')[0];
-  if (dateStr===today) return 'TODAY';
-  if (dateStr===yesterday) return 'YESTERDAY';
-  return fmtDate(dateStr).toUpperCase();
+  const yest  = new Date(Date.now()-86400000).toISOString().split('T')[0];
+  if (d === today) return 'TODAY';
+  if (d === yest)  return 'YESTERDAY';
+  return fmtDate(d).toUpperCase();
+}
+function fmtDate(d) {
+  const [,m,day] = d.split('-');
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1]+' '+parseInt(day);
 }
 
-function fmtDate(dateStr) {
-  const [y,m,d] = dateStr.split('-');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[parseInt(m)-1]} ${parseInt(d)}`;
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ─── TELEGRAM NOTIFICATIONS ───────────────────────────────────────────────────
-function getTelegramChats() {
-  const token = localStorage.getItem('oak_tg_token');
-  const steve = localStorage.getItem('oak_tg_steve');
+// ── TELEGRAM ───────────────────────────────────────────────────────────────────
+function sendTelegram(msg) {
+  const token  = localStorage.getItem('oak_tg_token');
+  const steve  = localStorage.getItem('oak_tg_steve');
   const adrian = localStorage.getItem('oak_tg_adrian');
-  const chats = [steve, adrian].filter(Boolean);
-  return { token, chats };
-}
-
-function sendTelegram(message) {
-  const { token, chats } = getTelegramChats();
-  if (!token || !chats.length) return;
-  chats.forEach(chatId => {
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: message })
-    }).then(r => r.json()).then(data => {
-      if (!data.ok) console.warn('Telegram error:', data);
-    }).catch(e => console.warn('Telegram fetch error:', e));
+  if (!token) return;
+  [steve, adrian].filter(Boolean).forEach(chatId => {
+    fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({chat_id: chatId, text: msg})
+    }).catch(() => {});
   });
 }
 
 function testTelegram() {
-  const { token, chats } = getTelegramChats();
-  if (!token || !chats.length) {
-    showToast('⚠️ Enter your Bot Token and at least one Chat ID in Settings first');
-    return;
-  }
-  showToast('📤 Sending test message…');
-  fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chats[0], text: '🧪 Test from Oakridge Firewood app! If you got this it is working.' })
-  }).then(r => r.json()).then(data => {
-    if (data.ok) {
-      showToast('✅ Telegram message sent! Check your app.');
-    } else {
-      showToast('❌ ' + (data.description || JSON.stringify(data)));
-      console.warn('Telegram error:', data);
-    }
-  }).catch(e => {
-    showToast('❌ Network error: ' + e.message);
-  });
+  const token = localStorage.getItem('oak_tg_token');
+  const steve = localStorage.getItem('oak_tg_steve');
+  if (!token || !steve) { showToast('⚠️ Enter Bot Token and Steve Chat ID first'); return; }
+  showToast('📤 Sending…');
+  fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({chat_id: steve, text: '🧪 Test from Oakridge Firewood — working! ✅'})
+  }).then(r => r.json()).then(d => {
+    if (d.ok) showToast('✅ Sent! Check Telegram on your phone.');
+    else showToast('❌ ' + d.description);
+  }).catch(e => showToast('❌ ' + e.message));
 }
 
-// ─── SETTINGS SHEET ───────────────────────────────────────────────────────────
+// ── SETTINGS ───────────────────────────────────────────────────────────────────
 function openSettings() {
-  loadSettings();
+  document.getElementById('s-name').value      = localStorage.getItem('oak_user')       || '';
+  document.getElementById('s-firebase').value  = localStorage.getItem('oak_firebase')   || '';
+  document.getElementById('s-tg-token').value  = localStorage.getItem('oak_tg_token')   || '';
+  document.getElementById('s-tg-steve').value  = localStorage.getItem('oak_tg_steve')   || '';
+  document.getElementById('s-tg-adrian').value = localStorage.getItem('oak_tg_adrian')  || '';
   document.getElementById('settings-overlay').classList.add('open');
 }
-function closeSettings(e) {
-  if (!e || e.target===document.getElementById('settings-overlay'))
+function closeSettingsOverlay(e) {
+  if (e.target === document.getElementById('settings-overlay'))
     document.getElementById('settings-overlay').classList.remove('open');
 }
+function saveSettings() {
+  currentUser = document.getElementById('s-name').value;
+  localStorage.setItem('oak_user',       currentUser);
+  localStorage.setItem('oak_firebase',   document.getElementById('s-firebase').value.trim());
+  localStorage.setItem('oak_tg_token',   document.getElementById('s-tg-token').value.trim());
+  localStorage.setItem('oak_tg_steve',   document.getElementById('s-tg-steve').value.trim());
+  localStorage.setItem('oak_tg_adrian',  document.getElementById('s-tg-adrian').value.trim());
+  document.getElementById('header-name').textContent = currentUser || 'Set Name';
+  document.getElementById('settings-overlay').classList.remove('open');
+  showToast('✅ Settings saved');
+  startPolling();
+}
 
-// ─── CONFIRM SHEET ────────────────────────────────────────────────────────────
+// ── CONFIRM ────────────────────────────────────────────────────────────────────
 function showConfirm(icon, title, msg, cb) {
   document.getElementById('confirm-icon').textContent = icon;
   document.getElementById('confirm-title').textContent = title;
@@ -1018,20 +546,21 @@ function showConfirm(icon, title, msg, cb) {
   document.getElementById('confirm-yes-btn').onclick = () => { closeConfirm(); cb(); };
   document.getElementById('confirm-overlay').classList.add('open');
 }
-function closeConfirm() {
-  document.getElementById('confirm-overlay').classList.remove('open');
-}
+function closeConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); }
 
-// ─── TOAST ────────────────────────────────────────────────────────────────────
+// ── SYNC BAR ───────────────────────────────────────────────────────────────────
+function syncShow() { document.getElementById('sync-bar').classList.add('visible'); }
+function syncHide() { document.getElementById('sync-bar').classList.remove('visible'); }
+
+// ── TOAST ──────────────────────────────────────────────────────────────────────
 function showToast(msg) {
   const el = document.createElement('div');
   el.className = 'toast';
   el.textContent = msg;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(()=>el.remove(), 3000);
+  setTimeout(() => el.remove(), 3500);
 }
 </script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </body>
 </html>
+
